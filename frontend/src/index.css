@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #FF5722;
+    --color-primary-dark: #E64A19;
+    --color-secondary: #212121;
+    --color-accent: #FFC107;
+    --color-success: #4CAF50;
+    --color-warning: #FF9800;
+    --color-danger: #F44336;
+
+    --font-sans: "Inter", sans-serif;
+    --font-serif: "Playfair Display", serif;
+}
+
+/* 
+   We keep the custom variables mapping if they are used in legacy CSS files, 
+   but ideally we move to utility classes. 
+*/
+:root {
+    --color-bg-light: #FAFAFA;
+    --color-surface-light: #FFFFFF;
+}
+
+body {
+    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    @apply font-serif font-bold text-gray-900;
+}
