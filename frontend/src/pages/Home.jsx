@@ -1,7 +1,8 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef, useEffect } from 'react';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChefHat, Truck, Award, Star, ArrowRight } from 'lucide-react';
+import MovingTrainVideo from '../assets/Moving Train.mp4';
 
 const Card = ({ children, className }) => (
     <motion.div
@@ -25,8 +26,33 @@ const SectionTitle = ({ children, centered = true }) => (
 
 const Home = () => {
     const reviewsRef = useRef(null);
-    const { scrollYProgress } = useScroll({ target: reviewsRef, offset: ["start end", "end start"] });
-    const x = useTransform(scrollYProgress, [0, 1], [0, -100]);
+    const videoRef = useRef(null);
+
+    // Play video when it comes into view
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (videoRef.current) {
+                    if (entry.isIntersecting) {
+                        videoRef.current.play();
+                    } else {
+                        videoRef.current.pause();
+                    }
+                }
+            },
+            { threshold: 0.5 } // Play when 50% visible
+        );
+
+        if (videoRef.current) {
+            observer.observe(videoRef.current);
+        }
+
+        return () => {
+            if (videoRef.current) {
+                observer.unobserve(videoRef.current);
+            }
+        };
+    }, []);
 
     return (
         <div className="font-sans overflow-x-hidden">
@@ -92,6 +118,23 @@ const Home = () => {
                 </motion.div>
             </section>
 
+            {/* Video Section */}
+            <section className="relative h-screen bg-black overflow-hidden">
+                <video
+                    ref={videoRef}
+                    src={MovingTrainVideo}
+                    className="w-full h-full object-cover"
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                />
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center pointer-events-none">
+                    <h2 className="text-white text-5xl md:text-7xl font-serif font-bold text-center px-4 drop-shadow-2xl">
+                        Journey Through Flavour
+                    </h2>
+                </div>
+            </section>
             {/* About / Story Section */}
             <section className="py-24 px-4 bg-white">
                 <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -141,21 +184,30 @@ const Home = () => {
             </section>
 
             {/* Features Section */}
-            <section className="py-24 px-4 bg-gray-50">
-                <div className="max-w-7xl mx-auto">
-                    <SectionTitle>Why Choose Us</SectionTitle>
+            <section className="py-24 px-4 bg-black relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #333 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+                <div className="max-w-7xl mx-auto relative z-10">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-4xl md:text-5xl font-bold font-serif mb-16 text-center text-white"
+                    >
+                        Why Choose <span className="text-orange-500">Us</span>
+                    </motion.h2>
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
                             { title: 'Farm to Table', desc: 'Sourced daily from local organic farms for peak freshness.', icon: <span className="text-4xl">🥗</span> },
                             { title: 'Master Chefs', desc: 'Culinary experts dedicated to crafting the perfect dish.', icon: <ChefHat size={40} className="text-orange-500" /> },
-                            { title: 'Lightning Delivery', desc: 'Hot and fresh food delivered to your door in minutes.', icon: <Truck size={40} className="text-blue-500" /> }
+                            { title: 'Lightning Delivery', desc: 'Hot and fresh food delivered to your door in minutes.', icon: <Truck size={40} className="text-blue-400" /> }
                         ].map((feature, index) => (
-                            <Card key={index} className="flex flex-col items-center text-center group">
-                                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-50 transition-colors">
+                            <Card key={index} className="flex flex-col items-center text-center group bg-white/5 border-white/10 hover:bg-white/10 hover:border-orange-500/30 transition-all duration-300">
+                                <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-600/20 transition-colors">
                                     {feature.icon}
                                 </div>
-                                <h3 className="text-2xl font-bold mb-4 text-gray-800 font-serif">{feature.title}</h3>
-                                <p className="text-gray-500 leading-relaxed">{feature.desc}</p>
+                                <h3 className="text-2xl font-bold mb-4 text-white font-serif">{feature.title}</h3>
+                                <p className="text-gray-400 leading-relaxed font-light">{feature.desc}</p>
                             </Card>
                         ))}
                     </div>

@@ -13,10 +13,6 @@
     --font-serif: "Playfair Display", serif;
 }
 
-/* 
-   We keep the custom variables mapping if they are used in legacy CSS files, 
-   but ideally we move to utility classes. 
-*/
 :root {
     --color-bg-light: #FAFAFA;
     --color-surface-light: #FFFFFF;
@@ -32,5 +28,5 @@ h3,
 h4,
 h5,
 h6 {
-    @apply font-serif font-bold text-gray-900;
+    @apply font-serif font-bold;
 }
